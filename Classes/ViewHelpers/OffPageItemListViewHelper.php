@@ -1,28 +1,29 @@
 <?php
+
 namespace DL\Yag\ViewHelpers;
 /***************************************************************
-*  Copyright notice
-*
-*  (c) 2010-2013 Daniel Lienert <typo3@lienert.cc>, Michael Knoll <mimi@kaktsuteam.de>
-*  All rights reserved
-*
-*
-*  This script is part of the TYPO3 project. The TYPO3 project is
-*  free software; you can redistribute it and/or modify
-*  it under the terms of the GNU General Public License as published by
-*  the Free Software Foundation; either version 2 of the License, or
-*  (at your option) any later version.
-*
-*  The GNU General Public License can be found at
-*  http://www.gnu.org/copyleft/gpl.html.
-*
-*  This script is distributed in the hope that it will be useful,
-*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*  GNU General Public License for more details.
-*
-*  This copyright notice MUST APPEAR in all copies of the script!
-***************************************************************/
+ *  Copyright notice
+ *
+ *  (c) 2010-2013 Daniel Lienert <typo3@lienert.cc>, Michael Knoll <mimi@kaktsuteam.de>
+ *  All rights reserved
+ *
+ *
+ *  This script is part of the TYPO3 project. The TYPO3 project is
+ *  free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  The GNU General Public License can be found at
+ *  http://www.gnu.org/copyleft/gpl.html.
+ *
+ *  This script is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  This copyright notice MUST APPEAR in all copies of the script!
+ ***************************************************************/
 
 /**
  * Class provides image viewHelper
@@ -47,7 +48,7 @@ class OffPageItemListViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstrac
      * @api
      */
     protected $escapeOutput = FALSE;
-    
+
     /**
      * Initialize arguments.
      *
@@ -55,18 +56,14 @@ class OffPageItemListViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstrac
      */
     public function initializeArguments()
     {
-        $this->registerArgument('type', 'string', 'Should either be pre or post', true);
+        $this->registerArgument('type', 'string', 'Should either be pre or post', TRUE);
     }
-
-
 
     public function initialize()
     {
         parent::initialize();
         $this->configurationBuilder = \Tx_Yag_Domain_Configuration_ConfigurationBuilderFactory::getInstance();
     }
-
-
 
     /**
      * @return string
@@ -79,7 +76,8 @@ class OffPageItemListViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstrac
 
         $content = '';
 
-        foreach ($listData as $listRow) { /** @var Tx_PtExtlist_Domain_Model_List_Row $listRow */
+        foreach ($listData as $listRow) {
+            /** @var Tx_PtExtlist_Domain_Model_List_Row $listRow */
 
             $this->templateVariableContainer->add('image', $listRow['image']->getValue());
             $this->templateVariableContainer->add('listRow', $listRow);
@@ -90,7 +88,6 @@ class OffPageItemListViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstrac
 
         return $content;
     }
-
 
     /**
      * @throws Exception
@@ -106,7 +103,8 @@ class OffPageItemListViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstrac
         $yagContext = \Tx_Yag_Domain_Context_YagContextFactory::getInstance();
         $itemList = $yagContext->getItemlistContext();
 
-        $dataBackend = $itemList->getDataBackend(); /** @var Tx_Yag_Extlist_DataBackend_YagDataBackend $dataBackend */
+        $dataBackend = $itemList->getDataBackend();
+        /** @var Tx_Yag_Extlist_DataBackend_YagDataBackend $dataBackend */
 
         if ($type == 'pre') {
             return $dataBackend->getPrePageListData();
@@ -114,7 +112,6 @@ class OffPageItemListViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstrac
             return $dataBackend->getPostPageListData();
         }
     }
-
 
     /**
      * @param $listData
