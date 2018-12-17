@@ -9,7 +9,8 @@ return [
         'label' => 'title',
         'tstamp' => 'tstamp',
         'crdate' => 'crdate',
-        'versioningWS' => true,
+        'versioningWS' => 2,
+        'versioning_followPages' => true,
         'origUid' => 't3_origuid',
         'languageField' => 'sys_language_uid',
         'transOrigPointerField' => 'l18n_parent',
@@ -20,7 +21,7 @@ return [
             'fe_group' => 'fe_group'
         ],
         'dividers2tabs' => true,
-        'iconfile' => 'EXT:yag/Resources/Public/Icons/tx_yag_domain_model_item.png'
+        'iconfile' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('yag') . 'Resources/Public/Icons/tx_yag_domain_model_item.png'
     ],
     'interface' => [
         'showRecordFieldList' => 'title,filename,description,date,sourceuri,filehash,item_type,width,height,filesize,fe_user_uid,fe_group_uid,sorting,album,item_meta,fe_group',
@@ -40,7 +41,7 @@ return [
             'exclude' => 1,
             'label' => 'LLL:EXT:lang/locallang_general.php:LGL.language',
             'config' => [
-                'type' => 'select', 		'renderType' => 'selectSingle',
+                'type' => 'select',
                 'foreign_table' => 'sys_language',
                 'foreign_table_where' => 'ORDER BY sys_language.title',
                 'items' => [
@@ -51,9 +52,10 @@ return [
         ],
         'fe_group' => [
             'exclude' => 1,
+            'l10n_mode' => 'mergeIfNotBlank',
             'label' => 'LLL:EXT:lang/locallang_general.php:LGL.fe_group',
             'config' => [
-                'type' => 'select', 		'renderType' => 'selectSingle',
+                'type' => 'select',
                 'size' => 5,
                 'maxitems' => 20,
                 'items' => [
@@ -62,10 +64,7 @@ return [
                     ['LLL:EXT:lang/locallang_general.php:LGL.usergroups', '--div--']
                 ],
                 'exclusiveKeys' => '-1,-2',
-                'foreign_table' => 'fe_groups',
-                'behaviour' => [
-                    'allowLanguageSynchronization' => true,
-                ]
+                'foreign_table' => 'fe_groups'
             ]
         ],
         'l18n_parent' => [
@@ -73,7 +72,7 @@ return [
             'exclude' => 1,
             'label' => 'LLL:EXT:lang/locallang_general.php:LGL.l18n_parent',
             'config' => [
-                'type' => 'select', 		'renderType' => 'selectSingle',
+                'type' => 'select',
                 'items' => [
                     ['', 0],
                 ],
@@ -130,17 +129,25 @@ return [
         ],
         'description' => [
             'exclude' => 0,
+            'l10n_mode' => 'noCopy',
             'label' => 'LLL:EXT:yag/Resources/Private/Language/locallang_db.xlf:tx_yag_domain_model_album.description',
+            'defaultExtras' => 'richtext[*]',
             'config' => [
                 'type' => 'text',
                 'cols' => 40,
                 'rows' => 5,
-                'eval' => 'trim',
-                'enableRichtext' => true,
-                'richtextConfiguration' => 'default',
-                'fieldControl' => [
-                    'fullScreenRichtext' => [
-                        'disabled' => false,
+                'wizards' => [
+                    '_PADDING' => 2,
+                    'RTE' => [
+                        'notNewRecords' => 1,
+                        'RTEonly' => 1,
+                        'type' => 'script',
+                        'title' => 'Full screen Rich Text Editing',
+                        'icon' => 'wizard_rte2.gif',
+                        'script' => 'wizard_rte.php',
+                        'module' => [
+                        	'name' => 'wizard_rte'
+                        ]
                     ],
                 ],
             ]
@@ -151,8 +158,8 @@ return [
             'config' => [
                 'type' => 'input',
                 'size' => 12,
+                'max' => 20,
                 'eval' => 'datetime',
-                'renderType' => 'inputDateTime',
                 'checkbox' => 1,
                 'default' => time()
             ],
@@ -210,7 +217,19 @@ return [
                 'size' => '50',
                 'max' => '256',
                 'eval' => 'trim',
-                'renderType' => 'inputLink',
+                'wizards' => [
+                    '_PADDING' => 2,
+                    'link' => [
+                        'type' => 'popup',
+                        'title' => 'LLL:EXT:cms/locallang_ttc.xml:header_link_formlabel',
+                        'icon' => 'link_popup.gif',
+                        'script' => 'browse_links.php?mode=wizard',
+                        'JSopenParams' => 'height=300,width=500,status=0,menubar=0,scrollbars=1',
+                        'module' => [
+                        	'name' => 'wizard_link'
+                        ]
+                    ],
+                ],
                 'softref' => 'typolink',
             ],
         ],
@@ -254,35 +273,37 @@ return [
             'exclude' => 0,
             'label' => 'LLL:EXT:yag/Resources/Private/Language/locallang_db.xlf:tx_yag_domain_model_item.album',
             'config' => [
-                'type' => 'select', 		'renderType' => 'selectSingle',
+                'type' => 'select',
                 'foreign_table' => 'tx_yag_domain_model_album',
                 'minitems' => 0,
                 'maxitems' => 1,
-                'fieldControl' => [
-                    'editPopup' => [
-                        'disabled' => false,
-                        'options' => [
-                            'type' => 'popup',
-                            'title' => 'Edit',
-                            'module' => [
-                                'name' => 'wizard_edit',
-                            ],
-                            'popup_onlyOpenIfSelected' => true,
-                            'icon' => 'actions-open',
-                            'JSopenParams' => 'height=350,width=580,status=0,menubar=0,scrollbars=1',
-                        ],
+                'wizards' => [
+                    '_PADDING' => 1,
+                    '_VERTICAL' => 0,
+                    'edit' => [
+                        'type' => 'popup',
+                        'title' => 'Edit',
+                        'script' => 'wizard_edit.php',
+                        'icon' => 'edit2.gif',
+                        'popup_onlyOpenIfSelected' => 1,
+                        'JSopenParams' => 'height=350,width=580,status=0,menubar=0,scrollbars=1',
+                        'module' => [
+                        	'name' => 'wizard_edit'
+                        ]
                     ],
-                    'addRecord' => [
-                        'disabled' => false,
-                        'options' => [
-                            'title' => 'Create new',
-                            'setValue' => 'prepend',
+                    'add' => [
+                        'type' => 'script',
+                        'title' => 'Create new',
+                        'icon' => 'add.gif',
+                        'params' => [
                             'table' => 'tx_yag_domain_model_album',
                             'pid' => '###CURRENT_PID###',
-                            'module' => [
-                                'name' => 'wizard_add'
-                            ]
+                            'setValue' => 'prepend'
                         ],
+                        'script' => 'wizard_add.php',
+                        'module' => [
+                        	'name' => 'wizard_add'
+                        ]
                     ],
                 ],
             ],
@@ -291,35 +312,37 @@ return [
             'exclude' => 0,
             'label' => 'LLL:EXT:yag/Resources/Private/Language/locallang_db.xlf:tx_yag_domain_model_item.item_meta',
             'config' => [
-                'type' => 'select', 		'renderType' => 'selectSingle',
+                'type' => 'select',
                 'foreign_table' => 'tx_yag_domain_model_itemmeta',
                 'minitems' => 0,
                 'maxitems' => 1,
-                'fieldControl' => [
-                    'editPopup' => [
-                        'disabled' => false,
-                        'options' => [
-                            'type' => 'popup',
-                            'title' => 'Edit',
-                            'module' => [
-                                'name' => 'wizard_edit',
-                            ],
-                            'popup_onlyOpenIfSelected' => true,
-                            'icon' => 'actions-open',
-                            'JSopenParams' => 'height=350,width=580,status=0,menubar=0,scrollbars=1',
-                        ],
+                'wizards' => [
+                    '_PADDING' => 1,
+                    '_VERTICAL' => 0,
+                    'edit' => [
+                        'type' => 'popup',
+                        'title' => 'Edit',
+                        'script' => 'wizard_edit.php',
+                        'icon' => 'edit2.gif',
+                        'popup_onlyOpenIfSelected' => 1,
+                        'JSopenParams' => 'height=350,width=580,status=0,menubar=0,scrollbars=1',
+                        'module' => [
+                        	'name' => 'wizard_edit'
+                        ]
                     ],
-                    'addRecord' => [
-                        'disabled' => false,
-                        'options' => [
-                            'title' => 'Create new',
-                            'setValue' => 'prepend',
+                    'add' => [
+                        'type' => 'script',
+                        'title' => 'Create new',
+                        'icon' => 'add.gif',
+                        'params' => [
                             'table' => 'tx_yag_domain_model_itemmeta',
                             'pid' => '###CURRENT_PID###',
-                            'module' => [
-                                'name' => 'wizard_add'
-                            ]
+                            'setValue' => 'prepend'
                         ],
+                        'script' => 'wizard_add.php',
+                        'module' => [
+                        	'name' => 'wizard_add'
+                        ]
                     ],
                 ],
             ],
@@ -344,30 +367,26 @@ return [
         ],
 
         'crdate' => [
+            'l10n_mode' => 'mergeIfNotBlank',
             'label' => 'crdate',
             'config' => [
                 'type' => 'input',
                 'size' => 8,
+                'max' => 20,
                 'eval' => 'date',
-                'renderType' => 'inputDateTime',
                 'default' => 0,
-                'behaviour' => [
-                    'allowLanguageSynchronization' => true,
-                ]
             ]
         ],
 
         'tstamp' => [
+            'l10n_mode' => 'mergeIfNotBlank',
             'label' => 'crdate',
             'config' => [
                 'type' => 'input',
                 'size' => 8,
+                'max' => 20,
                 'eval' => 'date',
-                'renderType' => 'inputDateTime',
                 'default' => 0,
-                'behaviour' => [
-                    'allowLanguageSynchronization' => true,
-                ]
             ]
         ],
 

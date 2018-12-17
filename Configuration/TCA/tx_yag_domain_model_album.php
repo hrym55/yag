@@ -9,7 +9,8 @@ return [
         'label' => 'name',
         'tstamp' => 'tstamp',
         'crdate' => 'crdate',
-        'versioningWS' => true,
+        'versioningWS' => 2,
+        'versioning_followPages' => true,
         'origUid' => 't3_origuid',
         'languageField' => 'sys_language_uid',
         'transOrigPointerField' => 'l18n_parent',
@@ -20,7 +21,7 @@ return [
             'fe_group' => 'fe_group'
         ],
         'dividers2tabs' => true,
-        'iconfile' => 'EXT:yag/Resources/Public/Icons/tx_yag_domain_model_album.png'
+        'iconfile' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('yag') . 'Resources/Public/Icons/tx_yag_domain_model_album.png'
     ],
     'interface' => [
         'showRecordFieldList' => 'name,description,date,fe_user_uid,fe_group_uid,gallery,thumb,items,hidden,sorting,fe_group',
@@ -42,7 +43,7 @@ return [
             'exclude' => 1,
             'label' => 'LLL:EXT:lang/locallang_general.php:LGL.language',
             'config' => [
-                'type' => 'select', 		'renderType' => 'selectSingle',
+                'type' => 'select',
                 'foreign_table' => 'sys_language',
                 'foreign_table_where' => 'ORDER BY sys_language.title',
                 'items' => [
@@ -53,10 +54,10 @@ return [
         ],
         'fe_group' => [
             'exclude' => 1,
+            'l10n_mode' => 'mergeIfNotBlank',
             'label' => 'LLL:EXT:lang/locallang_general.php:LGL.fe_group',
             'config' => [
                 'type' => 'select',
-                'renderType' => 'selectSingle',
                 'size' => 5,
                 'maxitems' => 20,
                 'items' => [
@@ -65,10 +66,7 @@ return [
                     ['LLL:EXT:lang/locallang_general.php:LGL.usergroups', '--div--']
                 ],
                 'exclusiveKeys' => '-1,-2',
-                'foreign_table' => 'fe_groups',
-                'behaviour' => [
-                    'allowLanguageSynchronization' => true,
-                ]
+                'foreign_table' => 'fe_groups'
             ]
         ],
         'l18n_parent' => [
@@ -77,7 +75,6 @@ return [
             'label' => 'LLL:EXT:lang/locallang_general.php:LGL.l18n_parent',
             'config' => [
                 'type' => 'select',
-                'renderType' => 'selectSingle',
                 'items' => [
                     ['', 0],
                 ],
@@ -125,17 +122,25 @@ return [
         ],
         'description' => [
             'exclude' => 0,
+            'l10n_mode' => 'noCopy',
             'label' => 'LLL:EXT:yag/Resources/Private/Language/locallang_db.xlf:tx_yag_domain_model_album.description',
+            'defaultExtras' => 'richtext[*]',
             'config' => [
                 'type' => 'text',
                 'cols' => 40,
                 'rows' => 5,
-                'eval' => 'trim',
-                'enableRichtext' => true,
-                'richtextConfiguration' => 'default',
-                'fieldControl' => [
-                    'fullScreenRichtext' => [
-                        'disabled' => false,
+                'wizards' => [
+                    '_PADDING' => 2,
+                    'RTE' => [
+                        'notNewRecords' => 1,
+                        'RTEonly' => 1,
+                        'type' => 'script',
+                        'title' => 'Full screen Rich Text Editing',
+                        'icon' => 'wizard_rte2.gif',
+                        'module' => [
+                            'name' => 'wizard_rte'
+                        ],
+                        'script' => 'wizard_rte.php',
                     ],
                 ],
             ]
@@ -146,8 +151,8 @@ return [
             'config' => [
                 'type' => 'input',
                 'size' => 12,
+                'max' => 20,
                 'eval' => 'datetime',
-                'renderType' => 'inputDateTime',
                 'checkbox' => 1,
                 'default' => time()
             ],
@@ -175,35 +180,36 @@ return [
             'label' => 'LLL:EXT:yag/Resources/Private/Language/locallang_db.xlf:tx_yag_domain_model_album.gallery',
             'config' => [
                 'type' => 'select',
-                'renderType' => 'selectSingle',
                 'foreign_table' => 'tx_yag_domain_model_gallery',
                 'minitems' => 0,
                 'maxitems' => 1,
-                'fieldControl' => [
-                    'editPopup' => [
-                        'disabled' => false,
-                        'options' => [
-                            'type' => 'popup',
-                            'title' => 'Edit',
-                            'module' => [
-                                'name' => 'wizard_edit',
-                            ],
-                            'popup_onlyOpenIfSelected' => true,
-                            'icon' => 'actions-open',
-                            'JSopenParams' => 'height=350,width=580,status=0,menubar=0,scrollbars=1',
+                'wizards' => [
+                    '_PADDING' => 1,
+                    '_VERTICAL' => 0,
+                    'edit' => [
+                        'type' => 'popup',
+                        'title' => 'Edit',
+                        'script' => 'wizard_edit.php',
+                        'module' => [
+                            'name' => 'wizard_edit'
                         ],
+                        'icon' => 'edit2.gif',
+                        'popup_onlyOpenIfSelected' => 1,
+                        'JSopenParams' => 'height=350,width=580,status=0,menubar=0,scrollbars=1',
                     ],
-                    'addRecord' => [
-                        'disabled' => false,
-                        'options' => [
-                            'title' => 'Create new',
-                            'setValue' => 'prepend',
+                    'add' => [
+                        'type' => 'script',
+                        'title' => 'Create new',
+                        'icon' => 'add.gif',
+                        'params' => [
                             'table' => 'tx_yag_domain_model_gallery',
                             'pid' => '###CURRENT_PID###',
-                            'module' => [
-                                'name' => 'wizard_add'
-                            ]
+                            'setValue' => 'prepend'
                         ],
+                        'script' => 'wizard_add.php',
+                        'module' => [
+                            'name' => 'wizard_add'
+                        ]
                     ],
                 ],
             ],
@@ -227,6 +233,7 @@ return [
                     'enabledControls' => ['new' => false, 'delete' => false, 'hide' => false]
                 ],
                 'behaviour' => [
+                    'localizationMode' => 'select',
                     'localizeChildrenAtParentLocalization' => true
                 ]
             ],

@@ -9,7 +9,8 @@ return [
         'label' => 'name',
         'tstamp' => 'tstamp',
         'crdate' => 'crdate',
-        'versioningWS' => true,
+        'versioningWS' => 2,
+        'versioning_followPages' => true,
         'origUid' => 't3_origuid',
         'languageField' => 'sys_language_uid',
         'transOrigPointerField' => 'l18n_parent',
@@ -20,7 +21,7 @@ return [
             'fe_group' => 'fe_group'
         ],
         'dividers2tabs' => true,
-        'iconfile' => 'EXT:yag/Resources/Public/Icons/tx_yag_domain_model_gallery.png'
+        'iconfile' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('yag') . 'Resources/Public/Icons/tx_yag_domain_model_gallery.png'
     ],
     'interface' => [
         'showRecordFieldList' => 'name,description,date,fe_user_uid,fe_group_uid,albums,thumb_album,sorting,hidden,fe_group',
@@ -42,7 +43,7 @@ return [
             'exclude' => 1,
             'label' => 'LLL:EXT:lang/locallang_general.php:LGL.language',
             'config' => [
-                'type' => 'select', 		'renderType' => 'selectSingle',
+                'type' => 'select',
                 'foreign_table' => 'sys_language',
                 'foreign_table_where' => 'ORDER BY sys_language.title',
                 'items' => [
@@ -53,9 +54,10 @@ return [
         ],
         'fe_group' => [
             'exclude' => 1,
+            'l10n_mode' => 'mergeIfNotBlank',
             'label' => 'LLL:EXT:lang/locallang_general.php:LGL.fe_group',
             'config' => [
-                'type' => 'select', 		'renderType' => 'selectSingle',
+                'type' => 'select',
                 'size' => 5,
                 'maxitems' => 20,
                 'items' => [
@@ -64,10 +66,7 @@ return [
                     ['LLL:EXT:lang/locallang_general.php:LGL.usergroups', '--div--']
                 ],
                 'exclusiveKeys' => '-1,-2',
-                'foreign_table' => 'fe_groups',
-                'behaviour' => [
-                    'allowLanguageSynchronization' => true,
-                ]
+                'foreign_table' => 'fe_groups'
             ]
         ],
         'l18n_parent' => [
@@ -75,7 +74,7 @@ return [
             'exclude' => 1,
             'label' => 'LLL:EXT:lang/locallang_general.php:LGL.l18n_parent',
             'config' => [
-                'type' => 'select', 		'renderType' => 'selectSingle',
+                'type' => 'select',
                 'items' => [
                     ['', 0],
                 ],
@@ -114,17 +113,25 @@ return [
         ],
         'description' => [
             'exclude' => 0,
+            'l10n_mode' => 'noCopy',
             'label' => 'LLL:EXT:yag/Resources/Private/Language/locallang_db.xlf:tx_yag_domain_model_album.description',
+            'defaultExtras' => 'richtext[*]',
             'config' => [
                 'type' => 'text',
                 'cols' => 40,
                 'rows' => 5,
-                'eval' => 'trim',
-                'enableRichtext' => true,
-                'richtextConfiguration' => 'default',
-                'fieldControl' => [
-                    'fullScreenRichtext' => [
-                        'disabled' => false,
+                'wizards' => [
+                    '_PADDING' => 2,
+                    'RTE' => [
+                        'notNewRecords' => 1,
+                        'RTEonly' => 1,
+                        'type' => 'script',
+                        'title' => 'Full screen Rich Text Editing',
+                        'icon' => 'wizard_rte2.gif',
+                        'script' => 'wizard_rte.php',
+                        'module' => [
+                        	'name' => 'wizard_rte'
+                        ]
                     ],
                 ],
             ]
@@ -135,8 +142,8 @@ return [
             'config' => [
                 'type' => 'input',
                 'size' => 12,
+                'max' => 20,
                 'eval' => 'datetime',
-                'renderType' => 'inputDateTime',
                 'checkbox' => 1,
                 'default' => time()
             ],
@@ -208,6 +215,7 @@ return [
                     'enabledControls' => ['new' => false, 'delete' => false, 'hide' => false]
                 ],
                 'behaviour' => [
+                    'localizationMode' => 'select',
                     'localizeChildrenAtParentLocalization' => true
                 ]
             ],
