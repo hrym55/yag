@@ -9,10 +9,10 @@ return [
         'label' => 'name',
         'tstamp' => 'tstamp',
         'crdate' => 'crdate',
-        'versioningWS' => 0,
+        'versioningWS' => false,
         'delete' => 'deleted',
         'enablecolumns' => [],
-        'iconfile' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('yag') . 'Resources/Public/Icons/tx_yag_domain_model_resolutionfilecache.png'
+        'iconfile' => 'EXT:yag/Resources/Public/Icons/tx_yag_domain_model_resolutionfilecache.png'
     ],
     'hideTable' => 1,
     'interface' => [
@@ -65,37 +65,35 @@ return [
             'exclude' => 0,
             'label' => 'LLL:EXT:yag/Resources/Private/Language/locallang_db.xlf:tx_yag_domain_model_resolutionfilecache.item',
             'config' => [
-                'type' => 'select',
+                'type' => 'select', 		'renderType' => 'selectSingle',
                 'foreign_table' => 'tx_yag_domain_model_item',
                 'minitems' => 0,
                 'maxitems' => 1,
-                'wizards' => [
-                    '_PADDING' => 1,
-                    '_VERTICAL' => 0,
-                    'edit' => [
-                        'type' => 'popup',
-                        'title' => 'Edit',
-                        'script' => 'wizard_edit.php',
-                        'icon' => 'edit2.gif',
-                        'popup_onlyOpenIfSelected' => 1,
-                        'JSopenParams' => 'height=350,width=580,status=0,menubar=0,scrollbars=1',
-                        'module' => [
-                        	'name' => 'wizard_edit'
-                        ]
-                    ],
-                    'add' => [
-                        'type' => 'script',
-                        'title' => 'Create new',
-                        'icon' => 'add.gif',
-                        'params' => [
-                            'table' => 'tx_yag_domain_model_item',
-                            'pid' => '###CURRENT_PID###',
-                            'setValue' => 'prepend'
+                'fieldControl' => [
+                    'editPopup' => [
+                        'disabled' => false,
+                        'options' => [
+                            'type' => 'popup',
+                            'title' => 'Edit',
+                            'module' => [
+                                'name' => 'wizard_edit',
+                            ],
+                            'popup_onlyOpenIfSelected' => true,
+                            'icon' => 'actions-open',
+                            'JSopenParams' => 'height=350,width=580,status=0,menubar=0,scrollbars=1',
                         ],
-                        'script' => 'wizard_add.php',
-                        'module' => [
-                        	'name' => 'wizard_add'
-                        ]
+                    ],
+                    'addRecord' => [
+                        'disabled' => false,
+                        'options' => [
+                            'title' => 'Create new',
+                            'setValue' => 'prepend',
+                            'table' => 'tx_yag_domain_model_gallery',
+                            'pid' => '###CURRENT_PID###',
+                            'module' => [
+                                'name' => 'wizard_add'
+                            ]
+                        ],
                     ],
                 ],
             ],
